@@ -33,12 +33,17 @@ public class HomeController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-		return "homehj";
+		return "index";
 	}
 	
 	// 메인지도 띄워보려고 생성
 	@RequestMapping(value = "/map")
 	public String mainMap() {
-		return "mainmap";
+		return "map/mainmap";
+	}
+	
+	@RequestMapping(value="/example")
+	public String example() {
+		return "/map/example";
 	}
 }

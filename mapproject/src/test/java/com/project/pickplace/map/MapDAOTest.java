@@ -15,15 +15,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.project.pickplace.dao.MapDAO;
 import com.project.pickplace.dto.MapInfoDTO;
 
-/* MNUM	NUMBER(13,0)			No		1	글번호
-KAKAO_EMAIL	VARCHAR2(20 BYTE)	No		2	글쓴이
-MTITLE	VARCHAR2(30 BYTE)		No		3	제목
-MLOCAL	VARCHAR2(20 BYTE)		No		4	지역
-MCONTENT	VARCHAR2(40 BYTE)	Yes		5	메모
-MCDATE	DATE					No	SYSDATE 	6	등록날짜
-MUDATE	DATE					No	SYSDATE 	7	수정날짜
-BEGIN_LAT	VARCHAR2(30 BYTE)	No		8	시작위도
-BEGIN_LNG	VARCHAR2(30 BYTE)	No		9	시작경도 */
+/* MNUM		NUMBER(13,0)		No				1	글번호
+KAKAO_EMAIL	VARCHAR2(20 BYTE)	No				2	글쓴이
+MTITLE		VARCHAR2(30 BYTE)	No				3	제목
+MLOCAL		VARCHAR2(20 BYTE)	No				4	지역
+MCONTENT	VARCHAR2(40 BYTE)	Yes				5	메모
+MCDATE		DATE				No	SYSDATE 	6	등록날짜
+MUDATE		DATE				No	SYSDATE 	7	수정날짜
+BEGIN_LAT	VARCHAR2(30 BYTE)	No				8	시작위도
+BEGIN_LNG	VARCHAR2(30 BYTE)	No				9	시작경도 */
 
 // 핀 등록, 수정, 삭제 등 PinDAO(Service) 테스트 
 @ExtendWith(SpringExtension.class)
@@ -41,14 +41,22 @@ class MapDAOTest {
 	// 기록 등록하기
 	@Test @Disabled
 	void write_test() {
-		mapdto.setKakaoEmail("test@test.com");
-		mapdto.setMtitle("맵 기록 테스트");
-		mapdto.setMlocal("지역테스트");
-		mapdto.setMcontent("내용 테스트");
-		mapdto.setBeginLat("1234");
-		mapdto.setBeginLng("12345");
-		
-		mapdao.write(mapdto);
+		for (int j = 0; j < 11; j++) {
+			mapdto.setKakaoEmail("test@test.com");
+			mapdto.setMtitle("맵 기록 테스트...	" + j);
+			mapdto.setMlocal("지역테스트..." + j);
+			mapdto.setMcontent("내용 테스트... " + j);
+			mapdto.setBeginLat("1234" + j);
+			mapdto.setBeginLng("12345" + j);
+			
+			mapdao.write(mapdto);
+		}
+	}
+	
+	// 기록 보기
+	@Test @Disabled
+	void view_test() {
+		logger.info("게시글 보기 : " + mapdao.view(49).toString());
 	}
 	
 	// 기록 수정하기 

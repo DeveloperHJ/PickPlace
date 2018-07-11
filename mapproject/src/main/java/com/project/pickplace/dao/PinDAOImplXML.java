@@ -10,8 +10,8 @@ import com.project.pickplace.dto.PinInfoDTO;
 @Repository
 public class PinDAOImplXML implements PinDAO {
 	
-	// Mybatis 구별을 위한 namespace 변수
-	private final String NAMESPACE = "pininfo.";
+	// Mybatis 구별을 위한 namespace 상수
+	private static final String NAMESPACE = "pininfo.";
 	
 	@Autowired
 	SqlSession sqlsession;
@@ -21,14 +21,15 @@ public class PinDAOImplXML implements PinDAO {
 		sqlsession.insert(NAMESPACE + "insert", pindto);
 	}
 
+	// 전체 핀 리스트 가져오기
 	@Override
 	public List<PinInfoDTO> pinList() {
-		return null;
+		return sqlsession.selectList(NAMESPACE + "listAll");
 	}
 
 	@Override
-	public List<PinInfoDTO> pinList(String kakaoEmail, String mnum) {
-		return null;
+	public List<PinInfoDTO> pinList(Integer mnum) {
+		return sqlsession.selectList(NAMESPACE + "list", mnum);
 	}
 
 }

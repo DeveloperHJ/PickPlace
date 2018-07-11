@@ -25,6 +25,7 @@
 	<resources mapping="/js/**" location="/js/" />
 	<resources mapping="/scss/**" location="/scss/" />
 	<resources mapping="/fonts/**" location="/fonts/" />
+	<resources mapping="/cocoon/**" location="/cocoon/" />
 	
 	<resources mapping="/webjars/**" location="classPath:/META-INF/resources/webjars/" />
 

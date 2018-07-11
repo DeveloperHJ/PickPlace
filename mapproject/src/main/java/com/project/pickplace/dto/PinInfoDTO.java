@@ -5,15 +5,17 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/*PNUM	NUMBER(13,0)	No		1	지도번호
-MNUM	NUMBER(13,0)	No		2	게시글번호
-PMEMO	VARCHAR2(20 BYTE)	Yes		3	게시글메모
-PTHEME	VARCHAR2(20 BYTE)	No		4	핀테마
+/*
+PNUM		NUMBER(13,0)		No		1	지도번호
+MNUM		NUMBER(13,0)		No		2	게시글번호
+PMEMO		VARCHAR2(20 BYTE)	Yes		3	게시글메모
+PTHEME		VARCHAR2(20 BYTE)	No		4	핀테마
 BEGIN_LAT	VARCHAR2(30 BYTE)	No		5	시작위도
 BEGIN_LNG	VARCHAR2(30 BYTE)	No		6	시작경도
-PIN_LAT	VARCHAR2(30 BYTE)	No		7	핀위도
-PIN_LNG	VARCHAR2(30 BYTE)	No		8	핀경도
-RATE	NUMBER(10,0)	Yes		9	평점(RATE/2)*/
+PIN_LAT		VARCHAR2(30 BYTE)	No		7	핀위도
+PIN_LNG		VARCHAR2(30 BYTE)	No		8	핀경도
+RATE		NUMBER(10,0)		Yes		9	평점(RATE/2)
+*/
 
 
 /**

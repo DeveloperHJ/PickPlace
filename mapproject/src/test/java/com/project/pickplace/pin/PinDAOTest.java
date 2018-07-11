@@ -1,5 +1,8 @@
 package com.project.pickplace.pin;
 
+import java.util.List;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -25,9 +28,26 @@ class PinDAOTest {
 
 	private PinInfoDTO pindto;
 	
-	@Test
+	// 핀 찍기 테스트
+	@Test @Disabled
 	void insert_test() {
-		pindto = new PinInfoDTO(1, "testmemo1", "blue1", "1234567", "12345678", 5);
-		pindao.insert(pindto);
+		for (int i = 0; i < 100; i++) {
+			pindto = new PinInfoDTO(51, "testmemo.." + i, "color..test.." + i , "35.55858807" + i, "129.32036895" + i, 5);
+			pindao.insert(pindto);
+		}
+	}
+	
+	// 핀 목록 전체 불러오기
+	@Test @Disabled
+	void listAll_test() {
+		List<PinInfoDTO> list = pindao.pinList();
+		System.out.println(list.size());
+	}
+	
+	// 해당 게시글의 핀 목록
+	@Test @Disabled
+	void list_test() {
+		List<PinInfoDTO> list = pindao.pinList(51);
+		System.out.println(list.size());
 	}
 }

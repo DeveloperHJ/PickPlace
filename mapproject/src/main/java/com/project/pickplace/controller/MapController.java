@@ -20,7 +20,7 @@ import com.project.pickplace.dao.MapDAO;
 import com.project.pickplace.dto.MapInfoDTO;
 
 @Controller
-@RequestMapping("/map") // 게시판 형식으로 수정해야겠음. 댓글 형식 노노
+@RequestMapping("/map") 
 public class MapController {
 	private static final Logger logger = LoggerFactory.getLogger(MapController.class);
 	
@@ -28,12 +28,12 @@ public class MapController {
 	@Qualifier("mapDAOImplXML")
 	MapDAO mapdao;
 	
-	//내 지도 만들기 페이지
+/*	//내 지도 만들기 페이지 //모달로 변경
 	@RequestMapping(value="/write")
 	public void write(Model model)
 	{
 		logger.info("write GET...");
-	}
+	}*/
 	
 	//내 지도 작성 로직
 	@RequestMapping(value="/write", method=POST)
@@ -43,6 +43,15 @@ public class MapController {
 		mapdao.write(mapdto);
 		
 		return "redirect:/map/list";	// 글 작성 후 리스트 페이지 이동
+	}
+	
+	//내 지도 보기
+	@RequestMapping(value="/mapview", method=GET)
+	public void view(@RequestParam("mnum") Integer mnum, Model model)
+	{
+		logger.info("mapView GET.... : " + mnum);
+		MapInfoDTO mapdto = mapdao.view(mnum);
+		model.addAttribute("view", mapdto);
 	}
 	
 	//내 지도 수정하기
@@ -69,6 +78,7 @@ public class MapController {
 	public void list(Model model)
 	{
 		List<MapInfoDTO> list = mapdao.maplist();
+		logger.info("list GET..." + list.size());
 		model.addAttribute("maplist", list);
 	}
 }

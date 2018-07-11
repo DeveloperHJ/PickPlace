@@ -8,15 +8,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /*
-MNUM NUMBER(13,0)				No		1	글번호
-KAKAOEMAIL	VARCHAR2(20 BYTE)	No		2	글쓴이
-MTITLE	VARCHAR2(30 BYTE)		No		3	제목
-MLOCAL	VARCHAR2(20 BYTE)		No		4	지역
-MCONTENT	VARCHAR2(40 BYTE)	Yes		5	메모
-MCDATE	DATE					No	SYSDATE 	6	등록날짜
-MUDATE	DATE					No	SYSDATE 	7	수정날짜
-BEGINLAT	VARCHAR2(30 BYTE)	No		8	시작위도
-BEGINLNG	VARCHAR2(30 BYTE)	No		9	시작경도
+MNUM 		NUMBER(13,0)		No				1	글번호
+KAKAOEMAIL	VARCHAR2(20 BYTE)	No				2	글쓴이
+MTITLE		VARCHAR2(30 BYTE)	No				3	제목
+MLOCAL		VARCHAR2(20 BYTE)	No				4	지역
+MCONTENT	VARCHAR2(40 BYTE)	Yes				5	메모
+MCDATE		DATE				No	SYSDATE 	6	등록날짜
+MUDATE		DATE				No	SYSDATE 	7	수정날짜
+BEGINLAT	VARCHAR2(30 BYTE)	No				8	시작위도
+BEGINLNG	VARCHAR2(30 BYTE)	No				9	시작경도
 */
 
 @Data // getter, setter, toString, requiredArgsConstructor(Notnull 파라미터 생성자)

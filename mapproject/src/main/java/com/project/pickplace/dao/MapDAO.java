@@ -5,6 +5,10 @@ import java.util.List;
 import com.project.pickplace.dto.MapInfoDTO;
 
 public interface MapDAO {
+	
+	//기록 보기 
+	MapInfoDTO view(Integer mnum);
+	
 	// 기록 만들기
 	void write(MapInfoDTO mapdto);
 	
