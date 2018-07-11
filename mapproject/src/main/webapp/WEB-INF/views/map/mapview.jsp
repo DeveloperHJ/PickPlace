@@ -57,7 +57,7 @@ function searchDiv() {
             </div>
 
             <div style="text-align: end;">
-	            <button class="btn btn-outline-info" onclick="searchDiv()">검색하기</button>
+	           <button class="btn btn-outline-info" onclick="searchDiv()">검색하기</button>
                <button class="btn btn-outline-info" onclick="selectOverlay('MARKER')">Marker</button>
                <button class="btn btn-outline-info" onclick="selectOverlay('POLYLINE')">Line</button>
             </div>
