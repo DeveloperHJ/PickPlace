@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 /*
 MNUM 		NUMBER(13,0)		No				1	글번호
-KAKAOEMAIL	VARCHAR2(20 BYTE)	No				2	글쓴이
+KAKAOID		VARCHAR2(20 BYTE)	No				2	글쓴이
 MTITLE		VARCHAR2(30 BYTE)	No				3	제목
 MLOCAL		VARCHAR2(20 BYTE)	No				4	지역
 MCONTENT	VARCHAR2(40 BYTE)	Yes				5	메모
@@ -26,7 +26,7 @@ public class MapInfoDTO {
 	private Integer mnum;	 // 글번호
 	
 	@NotNull
-	private String kakaoEmail; // 글쓴이
+	private String kakaoid; // 글쓴이
 	
 	@NotNull
 	private String mtitle; 	 // 제목

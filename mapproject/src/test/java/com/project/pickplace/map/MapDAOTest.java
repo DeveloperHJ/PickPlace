@@ -39,10 +39,10 @@ class MapDAOTest {
 	private MapInfoDTO mapdto = new MapInfoDTO();
 	
 	// 기록 등록하기
-	@Test @Disabled
+	@Test 
 	void write_test() {
 		for (int j = 0; j < 11; j++) {
-			mapdto.setKakaoEmail("test@test.com");
+			mapdto.setKakaoid("itskim3");
 			mapdto.setMtitle("맵 기록 테스트...	" + j);
 			mapdto.setMlocal("지역테스트..." + j);
 			mapdto.setMcontent("내용 테스트... " + j);
@@ -83,5 +83,11 @@ class MapDAOTest {
 	@Test @Disabled
 	void delete_test() {
 		mapdao.delete(2);
+	}
+	
+	// 기록 카운트 
+	@Test @Disabled
+	void mapcount_test() {
+		logger.info(mapdao.maplist("test@test.com").toString());
 	}
 }

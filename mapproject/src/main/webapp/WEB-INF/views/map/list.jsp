@@ -59,15 +59,12 @@
 </div>
 <!-- 움직이는 컨테이너 클래스 끝 -->
 
-<a href="#" data-toggle="modal" data-target="#viewModal">
-모달</a>
-
 <!-- 기록 만들기 모달 창 시작 -->
 <div class="modal fade" id="myModal">
 	<div class="modal-dialog modal-dialog-centered modal-center">
 		<div class="modal-content">
 			
-			<!-- mnum, kakaoEmail, mtitle, mlocal, mcontent, beginLat, beginLng (7)-->
+			<!-- mnum, kakaoid, mtitle, mlocal, mcontent, beginLat, beginLng (7)-->
 			<form action="/map/write" method="post">
 			
 			<!-- Modal Header -->
@@ -78,7 +75,7 @@
 
 			<!-- Modal body -->
 			<div class="modal-body">
-					<input type="hidden" name="kakaoEmail" class="form-control" value="test@test.com">
+					<input type="hidden" name="kakaoid" class="form-control" value="itskim3">
 					<input type="text" name="mtitle" class="form-control" placeholder="나만의 지도 제목을 입력해주세요.">
 					  <!-- 선택창은 못생겼음
 					  <select class="form-control" name="mlocal">
@@ -115,7 +112,7 @@
 	<div class="modal-dialog modal-fullsize modal-center">
 		<div class="modal-content modal-fullsize">
 			
-			<!-- mnum, kakaoEmail, mtitle, mlocal, mcontent, beginLat, beginLng (7)-->
+			<!-- mnum, kakaoid, mtitle, mlocal, mcontent, beginLat, beginLng (7)-->
 			<form action="/map/write" method="post">
 			
 			<!-- Modal Header -->

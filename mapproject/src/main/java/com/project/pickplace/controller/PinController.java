@@ -54,7 +54,7 @@ public class PinController {
 		return responseEntity;
 	}
 	
-	//핀 리스트 불러오기
+	//모든 핀 리스트 불러오기
 	@RequestMapping(value="/list")
 	public ResponseEntity<Map<String, Object>> list() {
 		logger.info("list....");

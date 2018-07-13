@@ -35,6 +35,16 @@ public class MapController {
 		logger.info("write GET...");
 	}*/
 	
+	@RequestMapping
+	public String mainMap(Model model)
+	{
+		List<MapInfoDTO> list = mapdao.maplist();	// 로그인 구현 후 mymaplist()로 변경
+		logger.info("list GET..." + list.size());
+		model.addAttribute("mymaplist", list);
+		
+		return "index";
+	}
+	
 	//내 지도 작성 로직
 	@RequestMapping(value="/write", method=POST)
 	public String write(@Valid MapInfoDTO mapdto, BindingResult reseult)

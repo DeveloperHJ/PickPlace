@@ -9,5 +9,6 @@
 	<typeAliases>
 		<typeAlias type="com.project.pickplace.dto.PinInfoDTO" alias="PinDTO"/>
 		<typeAlias type="com.project.pickplace.dto.MapInfoDTO" alias="MapDTO"/>
+		<typeAlias type="com.project.pickplace.member.vo.MemberVO" alias="MemberVO"/>
 	</typeAliases>
 </configuration> 

@@ -45,8 +45,12 @@ public class MapDAOImplXML implements MapDAO {
 	//기록 리스트 불러오기
 	@Override
 	public List<MapInfoDTO> maplist() {
-		return sqlSession.selectList(NAMESPACE + "maplist");
+		return sqlSession.selectList(NAMESPACE + "allmaplist");
 	}
-
-
+	
+	//해당 아이디 기록 리스트 불러오기
+	@Override
+	public List<MapInfoDTO> maplist(String kakaoid) {
+		return sqlSession.selectOne(NAMESPACE + "mymaplist", kakaoid);
+	}
 }
