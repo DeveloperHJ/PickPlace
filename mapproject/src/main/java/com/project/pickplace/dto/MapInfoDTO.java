@@ -43,4 +43,5 @@ public class MapInfoDTO {
 	
 	@NotNull
 	private String beginLng; // 시작경도 
+
 }

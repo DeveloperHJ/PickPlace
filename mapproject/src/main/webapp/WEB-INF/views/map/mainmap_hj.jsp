@@ -131,39 +131,42 @@
              position : new daum.maps.LatLng(position.lat, position.lng)
          });
          
-        /* var infoContent = document.createElement('div'); */
-
-        var infoContent = '<div class="infoWindowDiv">' + 
-					        '    <div class="info">' + 
-					        '        <div class="title">' + 
-					        '            장소정보' + 
-					        '            <div class="close" onclick="closeOverlay()" title="닫기"></div>' + 
-					        '        </div>' + 
-					        '        <div class="body">' + 
-					        '            <div class="img">' +
-					        '                <img src="http://cfile181.uf.daum.net/image/250649365602043421936D" width="73" height="70">' +
-					        '           </div>' + 
-					        '            <div class="desc">' + 
-					        '                <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>' + 
-					        '                <div class="jibun ellipsis">' + marker.getPosition().getLat() + ', ' + marker.getPosition().getLng() + '</div>' +
-					        '				 <button type="button" onclick="modalPopup(' + marker.getPosition().getLat() + ',' + marker.getPosition().getLng() + ')">내 기록에 저장하기</button>' +
-					        '            </div>' + 
-					        '        </div>' + 
-					        '    </div>' +    
-					        '</div>';
-
-       /* infoRemovable = true; // 인포윈도우 X 버튼 생성  */
+        var infoContent = document.createElement('div');
+   
+        var btn = document.createElement('button');
+        btn.innerHTML = '내 기록에 저장하기';
+        infoContent.appendChild(btn); 
+        infoContent.innerHTML = '<div class="infoWindowDiv">' + 
+						        '    <div class="info">' + 
+						        '        <div class="title">' + 
+						        '            장소정보' + 
+						        '            <div class="close" onclick="closeOverlay()" title="닫기"></div>' + 
+						        '        </div>' + 
+						        '        <div class="body">' + 
+						        '            <div class="img">' +
+						        '                <img src="http://cfile181.uf.daum.net/image/250649365602043421936D" width="73" height="70">' +
+						        '           </div>' + 
+						        '            <div class="desc">' + 
+						        '                <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>' + 
+						        '                <div class="jibun ellipsis">' + marker.getPosition().getLat() + ', ' + marker.getPosition().getLng() + '</div>' +
+						        '				 <button type="button" onclick="insertPin(' + marker.getPosition().getLat() + ',' + marker.getPosition().getLng() + ')">내 기록에 저장하기</button>' +
+						        '            </div>' + 
+						        '        </div>' + 
+						        '    </div>' +    
+						        '</div>';
+/*         infoContent.innerHTML = '<div id="infoWindowDiv">' + 
+        	'위도 : ' + marker.getPosition().getLat() + ' 경도 : ' + marker.getPosition().getLng() + '<br></div>'; */
+        
+       infoRemovable = true; // 인포윈도우 X 버튼 생성 
        
        // 인포윈도우 객체 생성
        var infoWindow = new daum.maps.InfoWindow({
           content : infoContent,  
-          /* removable : infoRemovable */
+          removable : infoRemovable
        });
        
        // 마커 클릭 시 인포윈도우 생성 이벤트 
        daum.maps.event.addListener(marker, 'click', function(mouseEvent) {
-    	   infoWindow.close();
-    	   
             searchDetailAddrFromCoords(marker.getPosition(), function(result, status) {
               if(status == daum.maps.services.Status.OK) {
                  var detailAddress = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
@@ -179,7 +182,23 @@
                
                // 기본 인포윈도우 띄우기
                infoWindow.open(map, marker);
-
+               
+               // 버튼 클릭 시 모달 창 팝업
+               btn.addEventListener('click', function() { 
+	               $('#selectMap').modal({
+	            	   keyboard: true
+	               });
+	               
+	               $('#savePin').off('click');
+	               
+	                // 모달 저장버튼 클릭 시 핀 등록
+	           		$('#savePin').on('click', function(e) {
+	           			e.preventDefault();
+	           			var mapList = document.getElementById("mapTitleList");
+	           			var mnum = mapList.options[mapList.selectedIndex].value;
+	           			insertPin(mnum, marker.getPosition());
+	           		});
+               });  
              }); 
         }); 
          
@@ -191,29 +210,11 @@
      clusterer.addMarkers(markers);
  }); // $.get() 끝.
  
- // 버튼 클릭 시 모달 창 팝업
- function modalPopup(lat, lng) { 
-    $('#selectMap').modal({
- 	   keyboard: true
-    });
-    
-    $('#savePin').off('click');
-    
-     // 모달 저장버튼 클릭 시 핀 등록
-	$('#savePin').on('click', function(e) {
-		e.preventDefault();
-		var mapList = document.getElementById("mapTitleList");
-		var mnum = mapList.options[mapList.selectedIndex].value;
-		insertPin(mnum, lat, lng);
-	});
- };  
- 
  // 핀 등록 메서드 mnum, positions
- function insertPin(mnum, lat, lng){
-   console.log(mnum);
+ function insertPin(lat, lng){
    console.log("LAT" + lat);
    console.log("lNG" + lng);
-/*    $.ajax
+   $.ajax
    ({
       type:"POST",
       url:"/pin/insert",
@@ -238,7 +239,7 @@
          console.log(data);
          alert("핀이 정상적으로 등록되지 않았습니다.");
       }
-   });  */
+   }); 
  }
 
  // =================================== ▼ 좌표를 통해 주소 표시 메서드 ▼ ============================== 
