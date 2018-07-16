@@ -13,8 +13,8 @@
 <!-- 움직이는 컨테이너 클래스 시작 -->
 <div class="body-container container-fluid">
 	<!-- 모바일화면일 때 나타나는 메뉴 버튼 -->
-	<a class="menu-btn" href="javascript:void(0)"> <i
-		class="ion ion-grid"></i>
+	<a class="menu-btn" href="javascript:void(0)"> 
+	<i class="ion ion-grid"></i>
 	</a>
 
 	<!-- 컨테이너 row 시작 -->
@@ -26,29 +26,34 @@
 			<div class="portfolio">
 				<div class="container-fluid">
 					<!-- 기록 만들기 버튼 -->
-					<a href="#" data-toggle="modal" data-target="#myModal">
-					<img src="/cocoon/img/mapwrite.png" alt="mapwrite"  width="97.5" height="97.5">
-					</a>
-					
-					<!--=================== 기록 목록 시작 ====================-->
-					<div class="grid justify-content-center no-gutters">
-						<div class="grid-sizer col-sm-12 col-md-6 col-lg-3"></div>
-
-						<c:forEach items="${maplist}" var="mapdto">
-							<!-- <a href="#" data-toggle="modal" data-target="#viewModal"> -->
-							<a href="/map/mapview?mnum=${mapdto.mnum}">
-								<div class="card text-white bg-dark mb-3" style="max-width: 18rem; margin: 15px; display: inline-block">
-								  <div class="card-header">${mapdto.mtitle}</div>
-								  <div class="card-body">
-								    <h5 class="card-title">${mapdto.mcontent}</h5>
-								    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-								  </div>
-								</div>
-								<!-- 나의 기록 박스 끝 -->
-							</a>
-						</c:forEach>
-						
-					</div>
+					<div style='vertical-align: middle; text-align: center;'>
+		               <h4>아래의 '+'를 눌러서 나만의 여행지도 작성하기!<br>
+		               <a href="#" data-toggle="modal" data-target="#myModal">
+		               <img src="/cocoon/img/+.png" alt="mapwrite"  width="97.5" height="97.5">
+		               </a>
+		               </h4>
+	               </div>
+               
+	               <!--=================== 기록 목록 시작 ====================-->
+	               <div class="grid justify-content-center no-gutters">
+	                  <!-- <div class="grid-sizer col-sm-12 col-md-6 col-lg-3"></div> -->
+	
+	                  <c:forEach items="${maplist}" var="mapdto">
+	                     <!-- <a href="#" data-toggle="modal" data-target="#viewModal"> -->
+	                     <a href="/map/mapview?mnum=${mapdto.mnum}">
+	                        <div class="card text-white bg-dark mb-3" style="width: 30rem; height :18rem; margin: 15px; display: inline-block">
+	                          <div class="card-header">${mapdto.mtitle}</div>
+	                          <div class="card-body">
+	                            <h5 class="card-title">${mapdto.mcontent}</h5>
+	                            <p class="card-text">작성일  : ${mapdto.mcdate}<br>
+	                            수정일 : ${mapdto.mudate}</p>
+	                          </div>
+	                        </div>
+	                        <!-- 나의 기록 박스 끝 -->
+	                     </a>
+	                  </c:forEach>
+	                  
+	               </div>
 					<!--=================== 작품집 끝 ====================-->
 				</div>
 			</div>

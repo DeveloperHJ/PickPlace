@@ -28,6 +28,7 @@ public class MemberController {
 	@Autowired(required = true)
 	@Qualifier("memberServiceImplXML")
 	MemberService memberService;
+	
 
 /*	@RequestMapping("/member")
 	public String memberJoin(Model model) {

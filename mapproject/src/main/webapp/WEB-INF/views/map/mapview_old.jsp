@@ -14,25 +14,6 @@ function searchDiv() {
 }
 </script>
 
-<style>
-.overlay {
-    position:absolute;
-    left: -50px;
-    top:0;
-    bottom: 40px;
-    width:300px;
-    height: 200px;
-    background: #fff;
-    border:1px solid #ccc;
-    border-radius: 5px;
-    padding:5px;
-    font-size:12px;
-    text-align: center;
-    white-space: pre;
-    word-wrap: break-word;
-}
-</style>
-
 <body>
 <script type="text/javascript"
 		src="//dapi.kakao.com/v2/maps/sdk.js?appkey=df8bb19db219b164017e5e5170474bfb&libraries=services,clusterer,drawing"></script>
@@ -55,7 +36,7 @@ function searchDiv() {
 	
 		<!--======================================= Content1 - Map 시작 ======================================-->
 		<div class="col-lg-8 col-md-6 col-12 body_block align-content-center" style="background-color: #DFDFDF;">
-			<h4>새로운 장소를 등록하길 원하시나요? 원하는 위치에 지도를 우클릭해주세요!</h4>
+	
             <div class="map_wrap" style="width: 100%; height: 100%; float: left;">
                <div id="map"
                   style="width: 100%; height: 100%; position: relative; overflow: hidden;"></div>
@@ -85,6 +66,7 @@ function searchDiv() {
 		<div class="col-lg-2 col-md-3 col-12 body_block align-content-center" style="font-size: 14px; background-color: #DFDFDF;">
 			<button class="btn btn-outline-info" onclick="searchDiv()">검색하기</button>
 			<button class="btn btn-outline-info" onclick="selectOverlay('MARKER')">Marker</button>
+			<button class="btn btn-outline-info" onclick="selectOverlay('POLYLINE')">Line</button>
 		<a href="/map/delete?mnum=${view.mnum}">삭제</a>
 			${view.mnum} <br>
 			${view.kakaoid} <br>
@@ -105,127 +87,178 @@ function searchDiv() {
 <script>
 var map = new daum.maps.Map(document.getElementById('map'), { // 지도를 표시할 div
     center : new daum.maps.LatLng(36.2683, 127.6358), // 지도의 중심좌표 
-    level : 12 // 지도의 확대 레벨 
+    level : 6 // 지도의 확대 레벨 
 });
 
 // 마커 클러스터러를 생성합니다 
 var clusterer = new daum.maps.MarkerClusterer({
    map : map, // 마커들을 클러스터로 관리하고 표시할 지도 객체 
    averageCenter : true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정 
-   minLevel : 10 // 클러스터 할 최소 지도 레벨 
+   minLevel : 10, // 클러스터 할 최소 지도 레벨 
+   calculator : [ 10, 30, 50 ], // 클러스터의 크기 구분 값, 각 사이값마다 설정된 text나 style이 적용된다
+   styles : [ { // calculator 각 사이 값 마다 적용될 스타일을 지정한다
+      width : '30px',
+      height : '30px',
+      background : 'rgba(51, 204, 255, .8)',
+      borderRadius : '15px',
+      color : '#000',
+      textAlign : 'center',
+      fontWeight : 'bold',
+      lineHeight : '31px'
+   },
+      {
+         width : '40px',
+         height : '40px',
+         background : 'rgba(255, 153, 0, .8)',
+         borderRadius : '20px',
+         color : '#000',
+         textAlign : 'center',
+         fontWeight : 'bold',
+         lineHeight : '41px'
+      },
+      {
+         width : '50px',
+         height : '50px',
+         background : 'rgba(255, 51, 204, .8)',
+         borderRadius : '25px',
+         color : '#000',
+         textAlign : 'center',
+         fontWeight : 'bold',
+         lineHeight : '51px'
+      },
+      {
+         width : '60px',
+         height : '60px',
+         background : 'rgba(255, 80, 80, .8)',
+         borderRadius : '30px',
+         color : '#000',
+         textAlign : 'center',
+         fontWeight : 'bold',
+         lineHeight : '61px'
+      }
+   ]
 });
  
-// 데이터를 가져와 마커를 생성하고 클러스터러 객체에 넘겨줍니다
-$.getJSON("/pin/list/"+${view.mnum}, function(data) {
-	var imageSrc = 'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png',    
-	imageSize = new daum.maps.Size(32, 34), // 마커이미지의 크기입니다
-	imageOption = {
-		offset : new daum.maps.Point(27, 69)
-	}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+ // 데이터를 가져와 마커를 생성하고 클러스터러 객체에 넘겨줍니다
+ $.getJSON("/pin/list/"+${view.mnum}, function(data) {
+	 var imageSrc = 'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', // 마커이미지의 주소입니다    
+		imageSize = new daum.maps.Size(32, 34), // 마커이미지의 크기입니다
+		imageOption = {
+	   		offset : new daum.maps.Point(27, 69)
+		}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
 		
 	//마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
 	var markerImage = new daum.maps.MarkerImage(imageSrc, imageSize, imageOption);
-	
-	// 데이터에서 좌표 값을 가지고 마커를 표시합니다
-	// 마커 클러스터러로 관리할 마커 객체는 생성할 때 지도 객체를 설정하지 않습니다
-	var markers = $(data.item).map(function(i, position) {
-		var marker = new daum.maps.Marker({
-			position : new daum.maps.LatLng(position.pinLat, position.pinLng),
-			image : markerImage
-		});
 
-		// 마커에 띄울 인포윈도우 
-		var infoContent = document.createElement('div');
-		infoContent.innerHTML = "PMEMO : " + position.pmemo;
-		infoContent.setAttribute("class", "infoWindowDiv");
-		infoContent.style.backgroundColor = "yellow";
-		
-		var infoRemovable = true;
-		var infoWindow = new daum.maps.InfoWindow({
-			content : infoContent,
-			removable: infoRemovable
-		});
-	      
-		// 마커 클릭 시 커스텀오버레이 생성 이벤트 
-		daum.maps.event.addListener(marker, 'click', function(mouseEvent) {
-			infoWindow.open(map, marker);
-		}); 
-	
-		return marker;
-		clickable:true;
-	}); // var markers 끝.
-	  
-	clusterer.addMarkers(markers);
-}); // $.getJSON() 끝. 
+	 
+    // 데이터에서 좌표 값을 가지고 마커를 표시합니다
+    // 마커 클러스터러로 관리할 마커 객체는 생성할 때 지도 객체를 설정하지 않습니다
+    var markers = $(data.item).map(function(i, position) {
+       return new daum.maps.Marker({
+          position : new daum.maps.LatLng(position.pinLat, position.pinLng),
+		  image : markerImage
+       });
+    }); 
+
+    // 클러스터러에 마커들을 추가합니다
+    clusterer.addMarkers(markers);
+ }); 
  
-// ========================================== 새 장소 등록 관련 이벤트 ========================================
-daum.maps.event.addListener(map, 'rightclick', function(mouseEvent) {      
-    var latlng = mouseEvent.latLng; 
-    
-    var marker = new daum.maps.Marker({
-    	position: latlng,
-	    draggable : true,
-		removable: true
-    });
-	
-    marker.setMap(map);
-    
-  	var newMarkerOver = document.createElement('div');
-	  	newMarkerOver.className = 'overlay';
-	  	newMarkerOver.innerHTML = '<input type="text" name="ptitle" id="ptitle" placeholder="장소 이름을 입력해주세요."><br>' +
-	  							  '<input type="text" name="pmemo" id="pmemo" placeholder="장소에 대한 메모를 입력할 수 있습니다.">';
-		
-	var overlay = new daum.maps.CustomOverlay({
-	    content: newMarkerOver,
-	    map: map,
-	    position: marker.getPosition(),
-	});
-	
-	overlay.setMap(map); 
-});
 
+ //커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+ var content = '<div class="customoverlay">' +
+    '  <a href="http://map.daum.net/link/map/11394059" target="_blank">' +
+    '    <span class="title">구의야구공원</span>' +
+    '  </a>' +
+    '</div>';
 
-// 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
-var mapTypeControl = new daum.maps.MapTypeControl();
+ //커스텀 오버레이가 표시될 위치입니다 
+ var position = new daum.maps.LatLng(37.54699, 127.09598);
 
-// 지도에 컨트롤을 추가해야 지도위에 표시됩니다
-// daum.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
-map.addControl(mapTypeControl, daum.maps.ControlPosition.TOPRIGHT);
+ //커스텀 오버레이를 생성합니다
+ var customOverlay = new daum.maps.CustomOverlay({
+    map : map,
+    position : position,
+    content : content,
+    yAnchor : 1
+ });
 
-// 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
-var zoomControl = new daum.maps.ZoomControl();
-map.addControl(zoomControl, daum.maps.ControlPosition.RIGHT);
+ var options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
+    map : map, // Drawing Manager로 그리기 요소를 그릴 map 객체입니다
+    drawingMode : [ // drawing manager로 제공할 그리기 요소 모드입니다
+       daum.maps.drawing.OverlayType.MARKER,
+       daum.maps.drawing.OverlayType.POLYLINE,
+    ],
+    // 사용자에게 제공할 그리기 가이드 툴팁입니다
+    // 사용자에게 도형을 그릴때, 드래그할때, 수정할때 가이드 툴팁을 표시하도록 설정합니다
+    guideTooltip : [ 'draw', 'drag', 'edit' ],
+    markerOptions : { // 마커 옵션입니다 
+       draggable : true, // 마커를 그리고 나서 드래그 가능하게 합니다 
+       removable : true // 마커를 삭제 할 수 있도록 x 버튼이 표시됩니다  
+    },
+    polylineOptions : { // 선 옵션입니다
+       draggable : true, // 그린 후 드래그가 가능하도록 설정합니다
+       removable : true, // 그린 후 삭제 할 수 있도록 x 버튼이 표시됩니다
+       editable : true, // 그린 후 수정할 수 있도록 설정합니다 
+       strokeColor : '#39f', // 선 색
+       hintStrokeStyle : 'dash', // 그리중 마우스를 따라다니는 보조선의 선 스타일
+       hintStrokeOpacity : 0.5 // 그리중 마우스를 따라다니는 보조선의 투명도
+    }
+ };
 
-// 지도가 이동, 확대, 축소로 인해 중심좌표가 변경되면 마지막 파라미터로 넘어온 함수를 호출하도록 이벤트를 등록합니다
-daum.maps.event.addListener(map, 'center_changed', function() {
+ // 위에 작성한 옵션으로 Drawing Manager를 생성합니다
+ var manager = new daum.maps.drawing.DrawingManager(options);
 
-   // 지도의  레벨을 얻어옵니다
-   var level = map.getLevel();
+ // 버튼 클릭 시 호출되는 핸들러 입니다
+ function selectOverlay(type) {
+    // 그리기 중이면 그리기를 취소합니다
+    manager.cancel();
 
-   // 지도의 중심좌표를 얻어옵니다 
-   var latlng = map.getCenter();
+    // 클릭한 그리기 요소 타입을 선택합니다
+    manager.select(daum.maps.drawing.OverlayType[type]);
+ }
 
-   var message = '<p>지도 레벨은 ' + level + ' 이고</p>';
-   message += '<p>중심 좌표는 위도 ' + latlng.getLat() + ', 경도 ' + latlng.getLng() + '입니다</p>';
+ // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+ var mapTypeControl = new daum.maps.MapTypeControl();
 
-   var resultDiv = document.getElementById('result');
-   resultDiv.innerHTML = message;
+ // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+ // daum.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
+ map.addControl(mapTypeControl, daum.maps.ControlPosition.TOPRIGHT);
 
-});
+ // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+ var zoomControl = new daum.maps.ZoomControl();
+ map.addControl(zoomControl, daum.maps.ControlPosition.RIGHT);
 
-// 주소-좌표 변환 객체를 생성합니다
-var geocoder = new daum.maps.services.Geocoder();
+ // 지도가 이동, 확대, 축소로 인해 중심좌표가 변경되면 마지막 파라미터로 넘어온 함수를 호출하도록 이벤트를 등록합니다
+ daum.maps.event.addListener(map, 'center_changed', function() {
 
-var marker = new daum.maps.Marker(), // 클릭한 위치를 표시할 마커입니다
-	infowindow = new daum.maps.InfoWindow({
-	   zindex : 1
-	}); // 클릭한 위치에 대한 주소를 표시할 인포윈도우입니다
+    // 지도의  레벨을 얻어옵니다
+    var level = map.getLevel();
 
-// 현재 지도 중심좌표로 주소를 검색해서 지도 좌측 상단에 표시합니다
-searchAddrFromCoords(map.getCenter(), displayCenterInfo);
+    // 지도의 중심좌표를 얻어옵니다 
+    var latlng = map.getCenter();
 
-// 지도를 클릭했을 때 클릭 위치 좌표에 대한 주소정보를 표시하도록 이벤트를 등록합니다
-/* daum.maps.event.addListener(map, 'click', function(mouseEvent) {
+    var message = '<p>지도 레벨은 ' + level + ' 이고</p>';
+    message += '<p>중심 좌표는 위도 ' + latlng.getLat() + ', 경도 ' + latlng.getLng() + '입니다</p>';
+
+    var resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = message;
+
+ });
+
+ // 주소-좌표 변환 객체를 생성합니다
+ var geocoder = new daum.maps.services.Geocoder();
+
+ var marker = new daum.maps.Marker(), // 클릭한 위치를 표시할 마커입니다
+    infowindow = new daum.maps.InfoWindow({
+       zindex : 1
+    }); // 클릭한 위치에 대한 주소를 표시할 인포윈도우입니다
+
+ // 현재 지도 중심좌표로 주소를 검색해서 지도 좌측 상단에 표시합니다
+ searchAddrFromCoords(map.getCenter(), displayCenterInfo);
+
+ // 지도를 클릭했을 때 클릭 위치 좌표에 대한 주소정보를 표시하도록 이벤트를 등록합니다
+ daum.maps.event.addListener(map, 'click', function(mouseEvent) {
    searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
       if (status === daum.maps.services.Status.OK) {
          var detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
@@ -245,7 +278,7 @@ searchAddrFromCoords(map.getCenter(), displayCenterInfo);
          infowindow.open(map, marker);
       }
    });
-}); */
+});
 
 // 중심 좌표나 확대 수준이 변경됐을 때 지도 중심 좌표에 대한 주소 정보를 표시하도록 이벤트를 등록합니다
 daum.maps.event.addListener(map, 'idle', function() {
@@ -277,8 +310,6 @@ function displayCenterInfo(result, status) {
    }
 }
 
-
-// =========================================== 검색 관련 스크립트 시작 ===========================================
 // 마커를 담을 배열입니다
 var markers = [];
 
@@ -482,8 +513,7 @@ function removeAllChildNods(el) {
         el.removeChild (el.lastChild);
     }
 }
-
-//=========================================== 검색 관련 스크립트 끝 ===========================================
+ 
 </script>
 <!-- 지도스크립트 끝 -->
 

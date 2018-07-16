@@ -50,4 +50,10 @@ class PinDAOTest {
 		List<PinInfoDTO> list = pindao.pinList(51);
 		System.out.println(list.size());
 	}
+	
+	// 핀 정보 가져오기 
+	@Test
+	void view_test() {
+		System.out.println(pindao.pinView(548).toString());
+	}
 }

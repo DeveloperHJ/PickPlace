@@ -34,4 +34,7 @@
 <!-- 지도 사용 위한 JQuery -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
+<!-- 로그인 스크립트 -->
+<script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
 </head>

@@ -26,4 +26,7 @@ public interface PinDAO {
 	// 핀 수정
 	
 	// 핀 삭제
+	
+	// 핀 정보 가져오기 
+	PinInfoDTO pinView(Integer pnum);
 }

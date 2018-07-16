@@ -38,6 +38,8 @@ public class PinInfoDTO {
 	private String pinLng;	 // 핀경도 
 	private Integer rate;	 // 평점 
 	
+	private String ptitle;	 // 핀 타이틀
+	
 	/**
 	 * RequiredConstructor 하면 원래 자동 생성 되어야 하는데 안 돼서 수동 생성..
 	 * pnum을 제외한 모든 값 입력 생성자 

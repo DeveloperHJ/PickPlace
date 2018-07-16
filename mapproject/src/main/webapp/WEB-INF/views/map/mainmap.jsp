@@ -10,10 +10,10 @@
     #centerAddress {display:block;margin-top:2px;font-weight: normal;}
     .bubjungAddr {padding:5px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
     
-    .infoWindowDiv {position: absolute;left: 0;bottom: 40px;width: 288px;height: 132px;margin-left: -144px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}
-    .infoWindowDiv * {padding: 0;margin: 0;}
-    .infoWindowDiv .info {width: 286px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}
-    .infoWindowDiv .info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}
+    .overlayDiv {position: absolute;width:400px;height:132px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}
+    .overlayDiv * {padding: 0;margin: 0;}
+    .overlayDiv .info {width: 398px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}
+    .overlayDiv .info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}
     .info .title {padding: 5px 0 0 10px;height: 30px;background: #eee;border-bottom: 1px solid #ddd;font-size: 18px;font-weight: bold;}
     .info .close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');}
     .info .close:hover {cursor: pointer;}
@@ -38,11 +38,6 @@
 
 <!-- 움직이는 컨테이너 클래스 시작 -->
 <div class="body-container container-fluid">
-	<!-- 모바일화면일 때 나타나는 메뉴 버튼 -->
-	<a class="menu-btn" href="javascript:void(0)"> <i
-		class="ion ion-grid"></i>
-	</a>
-
 	<div class="row justify-content-center">
 
 		<jsp:include page="../../nav.jsp" flush="true" />
@@ -124,27 +119,29 @@
 		 "ServiceKey=MaGP4FtoJKEQP9EbzPCPcOzp7Ko2WN1%2B4b60alL0v0OYT3EGo4daFaOFoKiulrPJKHNCvkdm%2FjWXHv7TviAAMg%3D%3D" + 
 		 "&contentTypeId=&areaCode=&sigunguCode=&cat1=&cat2=&cat3=&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide" + 
 		 "&arrange=A&numOfRows=25000&_type=json" data.response.body.items.item*/
-	$.get("resources/json/ulsanlist2.json"
+$.get("http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?" +
+		"ServiceKey=MaGP4FtoJKEQP9EbzPCPcOzp7Ko2WN1%2B4b60alL0v0OYT3EGo4daFaOFoKiulrPJKHNCvkdm%2FjWXHv7TviAAMg%3D%3D&" +
+		"contentTypeId=&areaCode=7&sigunguCode=&cat1=&cat2=&cat3=&listYN=Y&MobileOS=ETC&"+
+		"MobileApp=TourAPI3.0_Guide&arrange=A&numOfRows=10000&_type=json"
 		, function(data) {   
-     var markers = $(data.item).map(function(i, position) {
-        var marker = new daum.maps.Marker({
-             position : new daum.maps.LatLng(position.lat, position.lng)
-         });
-         
-        /* var infoContent = document.createElement('div'); */
+    var markers = $(data.response.body.items.item).map(function(i, position) {
+       	var marker = new daum.maps.Marker({
+            position : new daum.maps.LatLng(position.mapy, position.mapx)
+        });
+       
+       /* var infoContent = document.createElement('div');  */
 
-        var infoContent = '<div class="infoWindowDiv">' + 
+        var infoContent = '<div class="overlayDiv">' + 
 					        '    <div class="info">' + 
-					        '        <div class="title">' + 
-					        '            장소정보' + 
+					        '        <div class="title">' + position.title + 
 					        '            <div class="close" onclick="closeOverlay()" title="닫기"></div>' + 
 					        '        </div>' + 
 					        '        <div class="body">' + 
 					        '            <div class="img">' +
-					        '                <img src="http://cfile181.uf.daum.net/image/250649365602043421936D" width="73" height="70">' +
+					        '                <img src="' + position.firstimage +'" width="73" height="70">' +
 					        '           </div>' + 
 					        '            <div class="desc">' + 
-					        '                <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>' + 
+					        '                <div class="ellipsis">' + position.addr1 + position.addr2 + '</div>' + 
 					        '                <div class="jibun ellipsis">' + marker.getPosition().getLat() + ', ' + marker.getPosition().getLng() + '</div>' +
 					        '				 <button type="button" onclick="modalPopup(' + marker.getPosition().getLat() + ',' + marker.getPosition().getLng() + ')">내 기록에 저장하기</button>' +
 					        '            </div>' + 
@@ -152,68 +149,53 @@
 					        '    </div>' +    
 					        '</div>';
 
-       /* infoRemovable = true; // 인포윈도우 X 버튼 생성  */
-       
-       // 인포윈도우 객체 생성
+		var infoRemovable = true; // 인포윈도우 X 버튼 생성
+		
+       // 커스텀 오버레이 객체 생성
        var infoWindow = new daum.maps.InfoWindow({
           content : infoContent,  
-          /* removable : infoRemovable */
-       });
-       
-       // 마커 클릭 시 인포윈도우 생성 이벤트 
-       daum.maps.event.addListener(marker, 'click', function(mouseEvent) {
-    	   infoWindow.close();
-    	   
-            searchDetailAddrFromCoords(marker.getPosition(), function(result, status) {
-              if(status == daum.maps.services.Status.OK) {
-                 var detailAddress = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
-                       detailAddress += '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
-                     
-                    var addContent = '<div class="bubjungAddr">' +
-                                     '<span class="title">법정동 주소정보</span>' + 
-                                     detailAddress + '</div>';
-              }
-               
-               // 받아온 도로명 주소 인포윈도우에 띄우기
-               /* infoWindow.setContent(addContent);   */
-               
-               // 기본 인포윈도우 띄우기
-               infoWindow.open(map, marker);
+          removable: infoRemovable
+          }); 
+      
 
-             }); 
-        }); 
+       // 마커 클릭 시 커스텀오버레이 생성 이벤트 
+       daum.maps.event.addListener(marker, 'click', function(mouseEvent) {
+    	   infoWindow.open(map, marker);
+       }); 
          
-         return marker;
+       return marker;
          
-         clickable: true;              
-     });   // var markers 끝.
-     
-     clusterer.addMarkers(markers);
- }); // $.get() 끝.
+       clickable: true;
+     });  // var markers 끝.
+    
+    clusterer.addMarkers(markers);
+    
+    
+}); // $.get() 끝.
  
- // 버튼 클릭 시 모달 창 팝업
- function modalPopup(lat, lng) { 
-    $('#selectMap').modal({
- 	   keyboard: true
-    });
-    
-    $('#savePin').off('click');
-    
-     // 모달 저장버튼 클릭 시 핀 등록
+// 버튼 클릭 시 모달 창 팝업
+function modalPopup(lat, lng) {  
+	$('#selectMap').modal({
+		keyboard: true
+	});
+	
+	$('#savePin').off('click');
+	  
+	// 모달 저장버튼 클릭 시 핀 등록
 	$('#savePin').on('click', function(e) {
 		e.preventDefault();
 		var mapList = document.getElementById("mapTitleList");
 		var mnum = mapList.options[mapList.selectedIndex].value;
-		insertPin(mnum, lat, lng);
+		insertPin(mnum, title, lat, lng);
 	});
- };  
+};  
  
  // 핀 등록 메서드 mnum, positions
  function insertPin(mnum, lat, lng){
    console.log(mnum);
    console.log("LAT" + lat);
    console.log("lNG" + lng);
-/*    $.ajax
+/*     $.ajax
    ({
       type:"POST",
       url:"/pin/insert",
@@ -223,7 +205,7 @@
       },
       dataType: "text",
       data: JSON.stringify({
-         mnum: 1, 
+         mnum: mnum, 
          pmemo: "test...",
          ptheme:"blue2",
          pinLat: lat,
@@ -238,7 +220,7 @@
          console.log(data);
          alert("핀이 정상적으로 등록되지 않았습니다.");
       }
-   });  */
+   });   */
  }
 
  // =================================== ▼ 좌표를 통해 주소 표시 메서드 ▼ ============================== 

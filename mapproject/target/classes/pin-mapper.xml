@@ -18,19 +18,24 @@
 
 	<!-- 핀 등록 -->
   	<insert id="insert" parameterType="PinDTO">
-	    insert into PININFO(pnum, mnum, pmemo, ptheme, pinLat, pinLng, rate) 
+	    insert into PININFO(pnum, mnum, pmemo, ptheme, pinLat, pinLng, rate, ptitle) 
 	    values (
-	    	pininfo_seq.nextval, #{mnum}, #{pmemo}, #{ptheme}, #{pinLat}, #{pinLng}, #{rate}
+	    	pininfo_seq.nextval, #{mnum}, #{pmemo}, #{ptheme}, #{pinLat}, #{pinLng}, #{rate}, #{ptitle}
 	    )
 	</insert>
 	
 	<!-- 전체 핀 리스트 가져오기 -->
 	<select id="listAll" resultType="PinDTO">
-		select pnum, mnum, pmemo, ptheme, pinlat, pinlng, rate from pininfo
+		select pnum, mnum, pmemo, ptheme, pinlat, pinlng, rate, ptitle from pininfo
 	</select>
 	
 	<!-- 해당 목록 핀 리스트 가져오기 -->
 	<select id="list" resultType="PinDTO">
-		select pnum, mnum, pmemo, ptheme, pinlat, pinlng, rate from pininfo where mnum = #{mnum} 
+		select pnum, mnum, pmemo, ptheme, pinlat, pinlng, rate, ptitle from pininfo where mnum = #{mnum} 
+	</select>
+	
+	<!-- 해당 핀 정보 불러오기 -->
+	<select id="pinView" resultType="PinDTO">
+		select * from PININFO where pnum = #{pnum}
 	</select>
 </mapper>

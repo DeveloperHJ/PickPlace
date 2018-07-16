@@ -32,4 +32,9 @@ public class PinDAOImplXML implements PinDAO {
 		return sqlsession.selectList(NAMESPACE + "list", mnum);
 	}
 
+	// 핀 정보 가져오기
+	@Override
+	public PinInfoDTO pinView(Integer pnum) {
+		return sqlsession.selectOne(NAMESPACE + "pinView", pnum);
+	}
 }

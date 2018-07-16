@@ -41,6 +41,7 @@ public class PinController {
 	@RequestMapping(value="/insert", method=POST)
 	public ResponseEntity<String> insert(@RequestBody PinInfoDTO pindto)
 	{
+		System.out.println("insert");
 		logger.info("insert POST ..." + pindto.toString());
 		ResponseEntity<String> responseEntity = null;
 		
@@ -84,6 +85,23 @@ public class PinController {
 			responseEntity = new ResponseEntity<>(map, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
+			responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+		return responseEntity;
+	}
+	
+	//해당 핀 정보 가져오기 
+	@RequestMapping(value="/view/{pnum}")
+	public ResponseEntity<PinInfoDTO> insert(@PathVariable Integer pnum)
+	{
+		logger.info("view..." + pnum);
+		ResponseEntity<PinInfoDTO> responseEntity = null;
+		
+		try {
+			PinInfoDTO pindto = pindao.pinView(pnum);
+			responseEntity = new ResponseEntity<>(pindto, HttpStatus.OK);
+		} catch (Exception e) {
 			responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
