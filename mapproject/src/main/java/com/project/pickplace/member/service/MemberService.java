@@ -11,4 +11,6 @@ public interface MemberService {
 
 	// 회원목록 가져오기
 	public List<MemberVO> getMemberAll();
+	
+	int memberCheck(String kakaoid);
 }

@@ -23,12 +23,12 @@
 <link href="/cocoon/css/ionicons.min.css" rel="stylesheet">
 <!-- Carousel CSS -->
 <link href="/cocoon/css/slick.css" rel="stylesheet">
-<!-- Magnific-popup -->
-<link rel="stylesheet" href="/cocoon/css/magnific-popup.css">
+
 <!-- Animate CSS -->
 <link rel="stylesheet" href="/cocoon/css/animate.min.css">
 <!-- Custom styles for this template -->
 <link href="/cocoon/css/main.css" rel="stylesheet">
+
 <title>PickPlace</title>
 
 <!-- 지도 사용 위한 JQuery -->

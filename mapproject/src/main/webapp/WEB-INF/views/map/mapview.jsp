@@ -31,6 +31,12 @@ function searchDiv() {
     white-space: pre;
     word-wrap: break-word;
 }
+
+#pinWriteInfo {
+	font-size:10px;
+}
+
+.star {width:15%; height:15%}
 </style>
 
 <body>
@@ -55,7 +61,8 @@ function searchDiv() {
 	
 		<!--======================================= Content1 - Map 시작 ======================================-->
 		<div class="col-lg-8 col-md-6 col-12 body_block align-content-center" style="background-color: #DFDFDF;">
-			<h4>새로운 장소를 등록하길 원하시나요? 원하는 위치에 지도를 우클릭해주세요!</h4>
+			<span style="float: right"><a href="/map/delete?mnum=${view.mnum}">기록 삭제</a></span>
+			<h4>내가 아는 장소를 소개해주세요! 우클릭을 하면 등록할 수 있습니다. 아무곳에나 좌클릭하면 마커가 사라집니다.</h4>
             <div class="map_wrap" style="width: 100%; height: 100%; float: left;">
                <div id="map"
                   style="width: 100%; height: 100%; position: relative; overflow: hidden;"></div>
@@ -83,10 +90,8 @@ function searchDiv() {
 		
 		<!--==================================== content2 - MapInfo 시작 ===================================-->
 		<div class="col-lg-2 col-md-3 col-12 body_block align-content-center" style="font-size: 14px; background-color: #DFDFDF;">
-			<button class="btn btn-outline-info" onclick="searchDiv()">검색하기</button>
-			<button class="btn btn-outline-info" onclick="selectOverlay('MARKER')">Marker</button>
-		<a href="/map/delete?mnum=${view.mnum}">삭제</a>
-			${view.mnum} <br>
+			<button class="btn btn-outline-info" style="width:100% height:30px;" onclick="searchDiv()">장소 검색하기</button><br>
+			<div id="mapInfo" style="width: 100%;">
 			${view.kakaoid} <br>
 			${view.mtitle} <br>
 			${view.mlocal} <br>
@@ -95,6 +100,31 @@ function searchDiv() {
 			${view.mudate} <br>
 			${view.beginLat} <br>
 			${view.beginLng}
+			</div>
+			
+			<form name="pinWrite" id="pinWriteForm">
+			<div id="pinWriteInfo" class="card" style="margin:2px; padding:2px; display: none;">
+			  <div class="card-body">
+			    <h5 class="card-title">나만의 장소 등록하기</h5>
+			    <input type="hidden" name="mnum" id="mnum" value="${view.mnum}" />
+			    <input type="hidden" name="ptheme" id="ptheme" value="blue" />
+			    <input type="hidden" name="rate" id="rate" value="" />
+			    <input type="hidden" name="pinLat" id="pinLat" />
+			    <input type="hidden" name="pinLng" id="pinLng" /> 
+			    <h6 class="card-subtitle mb-2 text-muted"><input type="text" name="ptitle" id="ptitle" placeholder="장소 이름을 입력해주세요." style="width:100%" /></h6>
+			    <p class="card-text">
+				    <textarea name="pmemo" id="pmemo" cols="30" rows="2" placeholder="내 장소에 대한 간단한 메모를 입력할 수 있습니다." style="width:100%"></textarea>
+				    <h6>별점을 선택해주세요!</h6> 
+				        <IMG class="star" id=image1 onmouseover=show(1) onclick=mark(1) onmouseout=noshow(1) src="/cocoon/img/star.png">
+					    <IMG class="star" id=image2 onmouseover=show(2) onclick=mark(2) onmouseout=noshow(2) src="/cocoon/img/star.png">
+					    <IMG class="star" id=image3 onmouseover=show(3) onclick=mark(3) onmouseout=noshow(3) src="/cocoon/img/star.png">
+					    <IMG class="star" id=image4 onmouseover=show(4) onclick=mark(4) onmouseout=noshow(4) src="/cocoon/img/star.png">
+					    <IMG class="star" id=image5 onmouseover=show(5) onclick=mark(5) onmouseout=noshow(5) src="/cocoon/img/star.png">
+			    </p>
+			    <input type="button" class="card-link" onclick="myPininsert()" value="내 장소 저장하기">
+			  </div>
+			</div>
+			</form>
 		</div>
 		<!--==================================== content2 - MapInfo 끝 =====================================-->
 	
@@ -105,14 +135,15 @@ function searchDiv() {
 <script>
 var map = new daum.maps.Map(document.getElementById('map'), { // 지도를 표시할 div
     center : new daum.maps.LatLng(36.2683, 127.6358), // 지도의 중심좌표 
-    level : 12 // 지도의 확대 레벨 
+    level : 11, // 지도의 확대 레벨 
+    maxLevel : 11
 });
 
 // 마커 클러스터러를 생성합니다 
 var clusterer = new daum.maps.MarkerClusterer({
    map : map, // 마커들을 클러스터로 관리하고 표시할 지도 객체 
    averageCenter : true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정 
-   minLevel : 10 // 클러스터 할 최소 지도 레벨 
+   minLevel : 9 // 클러스터 할 최소 지도 레벨 
 });
  
 // 데이터를 가져와 마커를 생성하고 클러스터러 객체에 넘겨줍니다
@@ -134,21 +165,19 @@ $.getJSON("/pin/list/"+${view.mnum}, function(data) {
 			image : markerImage
 		});
 
-		// 마커에 띄울 인포윈도우 
-		var infoContent = document.createElement('div');
-		infoContent.innerHTML = "PMEMO : " + position.pmemo;
-		infoContent.setAttribute("class", "infoWindowDiv");
-		infoContent.style.backgroundColor = "yellow";
+		// 마커에 띄울 커스텀 오버레이 
+		var overlayContent = document.createElement('div');
+		overlayContent.className = 'infoContent';
+		overlayContent.innerHTML = '나 오버레이;;';
 		
-		var infoRemovable = true;
-		var infoWindow = new daum.maps.InfoWindow({
-			content : infoContent,
-			removable: infoRemovable
-		});
-	      
+		var overlay = new daum.maps.CustomOverlay({
+			map: map, 
+			content: overlayContent 
+		})
+
 		// 마커 클릭 시 커스텀오버레이 생성 이벤트 
 		daum.maps.event.addListener(marker, 'click', function(mouseEvent) {
-			infoWindow.open(map, marker);
+			overlay.setPosition(marker.getPosition());
 		}); 
 	
 		return marker;
@@ -158,33 +187,148 @@ $.getJSON("/pin/list/"+${view.mnum}, function(data) {
 	clusterer.addMarkers(markers);
 }); // $.getJSON() 끝. 
  
-// ========================================== 새 장소 등록 관련 이벤트 ========================================
-daum.maps.event.addListener(map, 'rightclick', function(mouseEvent) {      
-    var latlng = mouseEvent.latLng; 
-    
-    var marker = new daum.maps.Marker({
-    	position: latlng,
-	    draggable : true,
-		removable: true
-    });
+// ========================================== 새 장소 등록 관련 우클릭 이벤트 시작 ========================================
+
+var locked = 0;
+
+<!-- 채워져 있는 별 이미지 넣는 부분 -->
+function show(star) 
+{
+	if (locked) { 
+		locked=0;
+		$("#rate").val(0);
+	};
 	
-    marker.setMap(map);
-    
-  	var newMarkerOver = document.createElement('div');
-	  	newMarkerOver.className = 'overlay';
-	  	newMarkerOver.innerHTML = '<input type="text" name="ptitle" id="ptitle" placeholder="장소 이름을 입력해주세요."><br>' +
-	  							  '<input type="text" name="pmemo" id="pmemo" placeholder="장소에 대한 메모를 입력할 수 있습니다.">';
-		
-	var overlay = new daum.maps.CustomOverlay({
-	    content: newMarkerOver,
-	    map: map,
-	    position: marker.getPosition(),
-	});
-	
-	overlay.setMap(map); 
+	var i;
+	var image;
+	var el;
+	var e = document.getElementById('rate');
+	var stateMSG;
+
+    for (i=1; i<=star; i++) {
+        image = 'image' + i;
+        el = document.getElementById(image); 
+        el.src="/cocoon/img/star_full.png";
+    }
+   
+	switch (star) {
+		case 1:
+			stateMSG = "2";
+			break;
+		case 2:
+			stateMSG = "4";
+			break;
+		case 3:
+			stateMSG = "6";
+			break;
+		case 4:
+			stateMSG = "8";
+			break;
+		case 5:
+			stateMSG = "10";
+			break;
+		default:
+			stateMSG = "";
+	}
+  
+	document.innerHTML = stateMSG;
+}
+
+// 비어있는 별 이미지 넣는 부분
+function noshow(star)
+{
+    if (locked) return;
+    var i;
+    var image;
+    var el;
+ 
+    for (i=1; i<=star; i++) {
+        image = 'image' + i;
+        el = document.getElementById(image);
+        el.src="/cocoon/img/star.png";
+    }
+} 
+
+function lock(star)
+{
+    show(star);
+    locked = 1;
+}
+
+function mark(star)
+{	
+	lock(star);
+	$("#rate").val(star);
+}
+
+var pinMarker = new daum.maps.Marker({
+    draggable : true
 });
 
+daum.maps.event.addListener(map, 'rightclick', function(mouseEvent) { 
+    var latlng = mouseEvent.latLng; 
+	console.log(latlng.getLat());
+	console.log(latlng.getLng());
+    
+    pinMarker.setPosition(latlng);
+    pinMarker.setMap(map);
+    
+    $("#pinWriteInfo").show();
+    $("#pinLat").val(latlng.getLat());
+    $("#pinLng").val(latlng.getLng());
+});
 
+daum.maps.event.addListener(map, 'click', function(mouseEvent) { 
+	pinMarker.setMap(null);
+	$("#pinWriteInfo").hide();
+});
+
+function myPininsert() {
+	var mnum = $("#mnum").val(),
+		pmemo = $("#pmemo").val(), 
+		ptheme = $("#ptheme").val(),
+		pinLat = $("#pinLat").val(),
+		pinLng = $("#pinLng").val(),
+		rate = $("#rate").val(),
+		ptitle = $("#ptitle").val();
+	alert(mnum + ", " + pmemo + ", " + ptheme + ", " + rate + ", " + ptitle);
+	
+	if(rate == 0) {
+		alert("별점을 입력해주세요!");
+	} else if(ptitle == null) {
+		alert("장소 이름을 입력해주세요!");
+	} else {
+	  	$.ajax({
+			type: "POST",
+			url: "/pin/insert",
+			headers:{
+				"Content-Type" : "application/json; charset=utf-8",
+				"X-HTTP-Method-Override" : "POST"
+			},
+			dataType: "text",
+			data: JSON.stringify({
+				mnum : mnum,
+				pmemo : pmemo, 
+				ptheme : ptheme,
+				pinLat : pinLat,
+				pinLng : pinLng,
+				rate : rate,
+				ptitle : ptitle
+			}),
+			success: function(result){
+				alert('핀 등록 성공');
+			},
+			error:function(e){
+				alert('핀 등록 실패');
+				console.log("실패" + e)
+			}
+		});
+	}
+};
+
+//========================================== 새 장소 등록 관련 우클릭 이벤트 끝 ========================================
+
+	
 // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
 var mapTypeControl = new daum.maps.MapTypeControl();
 
@@ -247,6 +391,7 @@ searchAddrFromCoords(map.getCenter(), displayCenterInfo);
    });
 }); */
 
+// ===================================== 좌표를 통한 주소 정보 표시 이벤트 ==========================================
 // 중심 좌표나 확대 수준이 변경됐을 때 지도 중심 좌표에 대한 주소 정보를 표시하도록 이벤트를 등록합니다
 daum.maps.event.addListener(map, 'idle', function() {
    searchAddrFromCoords(map.getCenter(), displayCenterInfo);
@@ -296,10 +441,10 @@ function searchPlaces() {
 
     var keyword = document.getElementById('keyword').value;
 
-   /*  if (!keyword.replace(/^\s+|\s+$/g, '')) {
+/*     if (!keyword.replace(/^\s+|\s+$/g, '')) {
         alert('키워드를 입력해주세요!');
         return false;
-    } */
+    }  */
 
     // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
     ps.keywordSearch( keyword, placesSearchCB); 

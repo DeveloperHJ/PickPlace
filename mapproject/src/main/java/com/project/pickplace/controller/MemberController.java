@@ -28,40 +28,28 @@ public class MemberController {
 	@Autowired(required = true)
 	@Qualifier("memberServiceImplXML")
 	MemberService memberService;
-	
-
-/*	@RequestMapping("/member")
-	public String memberJoin(Model model) {
-		
-		
-		model.addAttribute("memberVO", new MemberVO());
-		return "/member";
-	}*/
 
 	@RequestMapping(value = "/memberJoinOK", method = RequestMethod.POST)
 	public ResponseEntity<String> insert(@RequestBody MemberVO memberVO) {
 		logger.info("insert POST ..." + memberVO.toString());
 		ResponseEntity<String> responseEntity = null;
-
+			System.out.println(memberVO.getKakaoid());
 		try {
-			
-			memberService.memberInsert(memberVO);
-			responseEntity = new ResponseEntity<>("Success", HttpStatus.OK);
+			if(memberService.memberCheck(memberVO.getKakaoid()) >= 1) {
+				responseEntity = new ResponseEntity<>("Success", HttpStatus.OK);
+				System.out.println("dsafadf1 : " + memberService.memberCheck(memberVO.getKakaoid()));
+				
+			} else if(memberService.memberCheck(memberVO.getKakaoid()) == 0){
+				System.out.println("dsafadf2 : " + memberService.memberCheck(memberVO.getKakaoid()));
+				memberService.memberInsert(memberVO);
+				responseEntity = new ResponseEntity<>("Success", HttpStatus.OK);
+				
+			}
 		} catch (Exception e) {
 			responseEntity = new ResponseEntity<>("Fail", HttpStatus.BAD_REQUEST);
 		}
 
 		return responseEntity;
 	}
-
-/*	@RequestMapping(value = "/memberJoinOK", method = RequestMethod.POST)
-	public String memberJoinOK(@Valid MemberVO memberVO, BindingResult result) {
-		if (result.hasErrors()) {
-			logger.info("회원가입시 오류 발생~!!");
-			return "/member/memberJoin";
-		} else {
-			memberService.memberInsert(memberVO);
-		}
-		return "redirect:/member/memberList";
-	}*/
+	
 }

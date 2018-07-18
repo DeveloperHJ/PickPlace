@@ -19,8 +19,14 @@ public class MemberDAOImplXML implements MemberDAO {
 		sqlSession.insert("insertMember", memberVO);
 	}
 
-	@Override 
+	@Override
 	public List<MemberVO> getMemberList() {
 		return sqlSession.selectList("getMemberAll");
+	}
+
+	@Override
+	public int memberCheck(String kakaoid) {
+		return sqlSession.selectOne("compareMember", kakaoid);
+		// 1을 리턴.
 	}
 }

@@ -6,9 +6,13 @@
 	<select id="getMemberAll" resultType="MemberVO">
 		select * from member 
 	</select>
-		
+	
 	<insert id="insertMember" parameterType="MemberVO">
 		insert into member (kakaoid, kakaoemail, kakaonickname) values(#{kakaoid},#{kakaoemail},#{kakaonickname})
-	</insert> 
+	</insert>
+	
+	<select id="compareMember" resultType="int">
+		select count(*) from member where kakaoid = #{kakaoid}
+	</select>
 	
 </mapper>    

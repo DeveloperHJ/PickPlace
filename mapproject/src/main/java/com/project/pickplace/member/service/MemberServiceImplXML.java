@@ -29,4 +29,10 @@ public class MemberServiceImplXML implements MemberService{
 		return memberDAO.getMemberList();
 	}
 
+	@Override
+	public int memberCheck(String kakaoid) {
+		
+		// 1을 리턴 받은걸 다시 1로 리턴함.
+		return memberDAO.memberCheck(kakaoid); 
+	}
 }
