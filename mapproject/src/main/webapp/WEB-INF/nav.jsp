@@ -156,7 +156,7 @@
       
       function createKakaotalkLogout(){
          $("#kakao-logged-group .kakao-logout-btn,#kakao-logged-group .kakao-login-btn").remove();
-         var logoutBtn = $("<img/>",{"class":"kakao-login-btn","src":"/cocoon/img/kakaologout.png","width":"15%", "height":"15%"});
+         var logoutBtn = $("<img/>",{"class":"kakao-login-btn","src":"/cocoon/img/kakaologout.png"});
          logoutBtn.click(function(){               
             Kakao.Auth.logout(function(data){
                

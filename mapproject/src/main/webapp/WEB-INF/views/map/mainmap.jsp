@@ -9,20 +9,21 @@
     #centerAddress {display:block;margin-top:2px;font-weight: normal;}
     .bubjungAddr {padding:5px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
     
-    .overlayDiv {position: absolute;width:400px;height:132px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}
-    .overlayDiv * {padding: 0;margin: 0;}
-    .overlayDiv .info {width: 398px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}
-    .overlayDiv .info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}
+    .wrap {position: absolute;width:400px;height:132px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}
+    .wrap * {padding: 0;margin: 0;}
+    .wrap .info {width: 398px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}
+    .wrap .info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}
     .info .title {padding: 5px 0 0 10px;height: 30px;background: #eee;border-bottom: 1px solid #ddd;font-size: 18px;font-weight: bold;}
     .info .close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');}
     .info .close:hover {cursor: pointer;}
     .info .body {position: relative;overflow: hidden;}
     .info .desc {position: relative;margin: 13px 0 0 90px;height: 75px;}
-    .desc .ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+    .desc .ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;font-size: 11px;}
     .desc .jibun {font-size: 11px;color: #888;margin-top: -2px;}
     .info .img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}
     .info:after {content: '';position: absolute;margin-left: -12px;left: 50%;bottom: 0;width: 22px;height: 12px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
     .info .link {color: #5085BB;}
+    .star {width:7%; height:7%}
 </style>
 
 <body>
@@ -142,11 +143,10 @@ $(function() {
 	$('#exampleModalCenter').modal('show');
 });
 
-
 var map = new daum.maps.Map(document.getElementById('map'), { // 지도를 표시할 div
     center : new daum.maps.LatLng(36.2683, 127.6358), // 지도의 중심좌표 
-    level : 11, // 지도의 확대 레벨 
-    maxLevel: 11
+    level : 10, // 지도의 확대 레벨 
+    maxLevel: 10
 });
 
 function goPickPlace() {
@@ -162,7 +162,9 @@ function goPickPlace() {
 			getMemberMapList();
 			getMapList(areaCode); 
 
-			map.setCenter(new daum.maps.LatLng(35.532380960023396, 129.35216026190272));
+			// 맵 중심 변경
+			var centerLatLng = getLatLngCenter(areaCode);
+			map.setCenter(centerLatLng); 
 			
 			$('#exampleModalCenter').modal('hide');
 		} else {
@@ -176,7 +178,8 @@ function goPickPlace() {
 var clusterer = new daum.maps.MarkerClusterer({
     map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체 
     averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정 
-    minLevel: 7 // 클러스터 할 최소 지도 레벨 
+    minLevel: 10, // 클러스터 할 최소 지도 레벨 
+    minClusterSize: 10
 });
 
 // 주소-좌표 변환 객체 생성 
@@ -186,92 +189,88 @@ var geocoder = new daum.maps.services.Geocoder();
 searchAddrFromCoords(map.getCenter(), displayCenterInfo);  
 
 function getLatLngCenter(areaCode) {
-	var Lat;
-	var Lng; 
-	switch(areacode) {
-		case 1:
-			Lat = 37.557750452485635;
-			Lng = 126.97501055346655;
+	console.log("getLatLngCenter.areaCode : " + areaCode);
+	var lat;
+	var lng; 
+	switch(areaCode) {
+		case '1':
+			lat = 37.557750452485635;
+			lng = 126.97501055346655;
 			break;
-		case 2:
-			Lat = 37.386534428365266;
-			Lng = 126.64552533908758;
+		case '2':
+			lat = 37.386534428365266;
+			lng = 126.64552533908758;
 			break;
-		case 3:
-			Lat = 36.325302330271185;
-			Lng = 127.3859580408177;
+		case '3':
+			lat = 36.325302330271185;
+			lng = 127.3859580408177;
 			break;
-		case 4:
-			Lat = 35.8815677641002;
-			Lng = 128.59712964326022;
+		case '4':
+			lat = 35.8815677641002;
+			lng = 128.59712964326022;
 			break;
-		case 5:
-			Lat = 35.14914624766172;
-			Lng = 126.86339230622634;
+		case '5':
+			lat = 35.14914624766172;
+			lng = 126.86339230622634;
 			break;
-		case 6:
-			Lat = 35.16361404389137;
-			Lng = 129.0830419992461;
+		case '6':
+			lat = 35.16361404389137;
+			lng = 129.0830419992461;
 			break;
-		case 7:
-			Lat = 35.532380960023396;
-			Lng = 129.35216026190272;
+		case '7':
+			lat = 35.532380960023396;
+			lng = 129.35216026190272;
 			break;
-		case 8:
-			Lat = 36.487077796338696;
-			Lng = 127.28390926365512;
+		case '8':
+			lat = 36.487077796338696;
+			lng = 127.28390926365512;
 			break;
-		case 31:
-			Lat = 37.46716135397679;
-			Lng = 127.11792344838034;
+		case '31':
+			lat = 37.46716135397679;
+			lng = 127.11792344838034;
 			break;
-		case 32:
-			Lat = 37.676844678218934;
-			Lng = 128.49663828911716;
+		case '32':
+			lat = 37.676844678218934;
+			lng = 128.49663828911716;
 			break;
-		case 33:
-			Lat = 36.59572816261608;
-			Lng = 127.66302138630323;
+		case '33':
+			lat = 36.59572816261608;
+			lng = 127.66302138630323;
 			break;
-		case 34:
-			Lat = 36.422243288308316;
-			Lng = 126.99928635621353;
+		case '34':
+			lat = 36.422243288308316;
+			lng = 126.99928635621353;
 			break;
-		case 35:
-			Lat = 36.279155411855136;
-			Lng = 128.8227827174454;
+		case '35':
+			lat = 36.279155411855136;
+			lng = 128.8227827174454;
 			break;
-		case 36:
-			Lat = 35.25319638515488;
-			Lng = 128.2257328277327;
+		case '36':
+			lat = 35.25319638515488;
+			lng = 128.2257328277327;
 			break;
-		case 37:
-			Lat = 35.79469877531789;
-			Lng = 126.9539806747013;
+		case '37':
+			lat = 35.79469877531789;
+			lng = 126.9539806747013;
 			break;
-		case 38:
-			Lat = 34.821521368613794;
-			Lng = 126.91430378714884;
+		case '38':
+			lat = 34.821521368613794;
+			lng = 126.91430378714884;
 			break;
-		case 39:
-			Lat = 33.37141453965898;
-			Lng = 126.55813483405176;
+		case '39':
+			lat = 33.37141453965898;
+			lng = 126.55813483405176;
+			break;
+		default:
 			break;
 	}
-	var latlng = new daum.maps.LatLng(Lat, Lng);
 	
+	var latlng = new daum.maps.LatLng(lat, lng);
 	return latlng;
 }
 
 // JQuery로 getJSON, 마커 생성 및 클러스터러 객체에 넘겨줌. 
 // 데이터에 근거한 마커 표시, 마커 클러스터러로 관리할 마커 객체는 생성할 때 지도 객체를 설정하지 않습니다
-//	resources/json/ulsanlist2.json : 울산 지역 데이터
-// /pin/list : 우리 데이터
-/*  $.get("http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?" +
-		 "ServiceKey=MaGP4FtoJKEQP9EbzPCPcOzp7Ko2WN1%2B4b60alL0v0OYT3EGo4daFaOFoKiulrPJKHNCvkdm%2FjWXHv7TviAAMg%3D%3D" + 
-		 "&contentTypeId=&areaCode=&sigunguCode=&cat1=&cat2=&cat3=&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide" + 
-		 "&arrange=A&numOfRows=25000&_type=json" data.response.body.items.item*/
-
 function getMemberMapList() {
 	$.get("/pin/list", function(data) {   
 			var imageSrc = '/cocoon/img/marker_green.png',    
@@ -290,40 +289,98 @@ function getMemberMapList() {
 		            position : new daum.maps.LatLng(position.pinLat, position.pinLng),
 		            image: markerImage
 	        });
-	       
-	       /* var infoContent = document.createElement('div');  */
-	
-	        var infoContent = '<div class="overlayDiv">' + 
-						        '    <div class="info">' + 
-						        '        <div class="title">' + 'title' + 
-						        '            <div class="close" onclick="closeOverlay()" title="닫기"></div>' + 
-						        '        </div>' + 
-						        '        <div class="body">' + 
-						        '            <div class="img">' +
-						        '                <img src="' + 'firstimage' +'" width="73" height="70">' +
-						        '           </div>' + 
-						        '            <div class="desc">' + 
-						        '                <div class="ellipsis">' + 'addr1 + addr2' + '</div>' + 
-						        '                <div class="jibun ellipsis">' + marker.getPosition().getLat() + ', ' + marker.getPosition().getLng() + '</div>' +
-						        '				 <button type="button" onclick="modalPopup(' + marker.getPosition().getLat() + ',' + marker.getPosition().getLng() + ')">내 기록에 저장하기</button>' +
-						        '            </div>' + 
-						        '        </div>' + 
-						        '    </div>' +    
-						        '</div>';
-	
-			var infoRemovable = true; // 인포윈도우 X 버튼 생성
 			
-	       // 커스텀 오버레이 객체 생성
-	       var infoWindow = new daum.maps.InfoWindow({
-	          content : infoContent,  
-	          removable: infoRemovable
-	       }); 
-	      
-	       // 마커 클릭 시 커스텀오버레이 생성 이벤트 
-	       daum.maps.event.addListener(marker, 'click', function(mouseEvent) {
-	    	   infoWindow.open(map, marker);
-	       }); 
-	         
+		   // rate 세팅
+		   var stringRate = position.rate;
+		   var intRate = 1; 
+		   var star = '';
+
+		   switch(stringRate) {
+		   	case 1 : 
+		   		intRate = 1;
+		   		break;
+		   	case 2 :
+		   		intRate = 2;
+		   		break;
+		   	case 3 : 
+		   		intRate = 3;
+		   		break;
+		   	case 4 : 
+		   		intRate = 4;
+		   		break;
+		   	case 5 : 
+		   		intRate = 5;
+		   		break;
+		   	};
+		   	
+			for(var i = 0; i<intRate; i++){
+				star += '<img class="star" src="/cocoon/img/star_full.png">';
+			}
+			for(var i = 0; i<5-intRate; i++){
+				star += '<img class="star" src="/cocoon/img/star.png">';
+			}
+		   
+			// 오버레이 DOM 객체로 div 생성 
+			var wrap = document.createElement('div');
+           wrap.className = 'wrap';
+
+           var info = document.createElement('div');
+           info.className = 'info';
+
+           var title = document.createElement('div');
+           title.className = 'title';
+           title.innerHTML = position.ptitle;
+
+           var close = document.createElement('div');
+           close.className = 'close';
+           close.onclick = function() { closeOverlay() };
+
+           var body = document.createElement('div');
+           body.className = 'body';
+
+           var img = document.createElement('div');
+           img.className = 'img';
+
+           var firstimage = document.createElement('img');
+           firstimage.src = '/cocoon/img/nullimage.png';
+           firstimage.width = '73';
+           firstimage.height = '70';
+
+           var desc = document.createElement('div');
+           desc.className = 'desc';
+           desc.innerHTML = '<div class="ellipsis">' + position.pmemo + '</div>' + 
+	        				'<div class="ellipsis">' + star + '</div>' + 
+	        				'<div class="jibun ellipsis">' + '주소 정보' + '</div>' +
+	        				'<button type="button" ptitle="' + position.ptitle + '" onclick="modalPopup(this,' + marker.getPosition().getLat() + ',' + marker.getPosition().getLng() + ')">내 기록에 저장하기</button>';
+
+           img.appendChild(firstimage);
+
+           body.appendChild(img);
+           body.appendChild(desc);
+           
+           title.appendChild(close);
+
+           info.appendChild(title);
+           info.appendChild(body);
+
+           wrap.appendChild(info);
+           
+          // 커스텀 오버레이 객체 생성
+          var overlay = new daum.maps.CustomOverlay({
+             content : wrap,  
+          }); 
+         
+          // 마커 클릭 시 커스텀오버레이 생성 이벤트 
+          daum.maps.event.addListener(marker, 'click', function(mouseEvent) {
+             overlay.setMap(map);
+             overlay.setPosition(marker.getPosition());
+          }); 
+         
+           // 오버레이 닫기 메서드 
+           function closeOverlay() {
+        	    overlay.setMap(null);     
+        	}
+           
 	       return marker;
 	         
 	       clickable: true;
@@ -335,10 +392,6 @@ function getMemberMapList() {
 			
 // 공공데이터용 핀 불러오기 메서드
 function getMapList(areaCode) {
-/* 	console.log(getLatLngCenter(areaCode));
-	
-	map.setCenter(getLatLngCenter(areaCode)); */
-	
 	$.get("http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?" +
 			"ServiceKey=MaGP4FtoJKEQP9EbzPCPcOzp7Ko2WN1%2B4b60alL0v0OYT3EGo4daFaOFoKiulrPJKHNCvkdm%2FjWXHv7TviAAMg%3D%3D&" +
 			"contentTypeId=&areaCode=" + areaCode + 
@@ -362,39 +415,72 @@ function getMapList(areaCode) {
 	            image: markerImage
 	        });
 	       
-	       /* var infoContent = document.createElement('div');  */
-	       
-	        var infoContent = '<div class="overlayDiv">' + 
-						        '    <div class="info">' + 
-						        '        <div class="title" id="ptitle"><input type="hidden" id="title" value="' + position.title + '">' + position.title + 
-						        '            <div class="close" onclick="closeOverlay()" title="닫기"></div>' + 
-						        '        </div>' + 
-						        '        <div class="body">' + 
-						        '            <div class="img">' +
-						        '                <img src="' + position.firstimage +'" width="73" height="70">' +
-						        '           </div>' + 
-						        '            <div class="desc">' + 
-						        '                <div class="ellipsis">' + position.addr1 + position.addr2 + this + '</div>' + 
-						        '                <div class="jibun ellipsis">' + marker.getPosition().getLat() + ', ' + marker.getPosition().getLng() + '</div>' +
-						        '				 <button type="button" ptitle="' + position.title + '" onclick="modalPopup(this,' + marker.getPosition().getLat() + ',' + marker.getPosition().getLng() + ')">내 기록에 저장하기</button>' +
-						        '            </div>' + 
-						        '        </div>' + 
-						        '    </div>' +    
-						        '</div>';
-			
-			var infoRemovable = true; // 인포윈도우 X 버튼 생성
-			
-	       // 커스텀 오버레이 객체 생성
-	       var infoWindow = new daum.maps.InfoWindow({
-	          content : infoContent,  
-	          removable: infoRemovable
-	          }); 
-	      
-	       // 마커 클릭 시 커스텀오버레이 생성 이벤트 
-	       daum.maps.event.addListener(marker, 'click', function(mouseEvent) {
-	    	   infoWindow.open(map, marker);
-	       }); 
+		   // img 세팅
+		   var positionImg = position.firstimage;
+		   
+		   if(positionImg == null) {
+			   positionImg = '/cocoon/img/nullimage.png';
+		   }
+		   
+		  // 오버레이 DOM 객체로 div 생성 
+		  var wrap = document.createElement('div');
+	         wrap.className = 'wrap';
+	
+	         var info = document.createElement('div');
+	         info.className = 'info';
+	
+	         var title = document.createElement('div');
+	         title.className = 'title';
+	         title.innerHTML = position.title;
+	
+	         var close = document.createElement('div');
+	         close.className = 'close';
+	         close.onclick = function() { closeOverlay() };
+	
+	         var body = document.createElement('div');
+	         body.className = 'body';
+	
+	         var img = document.createElement('div');
+	         img.className = 'img';
+	
+	         var firstimage = document.createElement('img');
+	         firstimage.src = positionImg;
+	         firstimage.width = '73';
+	         firstimage.height = '70';
+	
+	         var desc = document.createElement('div');
+	         desc.className = 'desc';
+	         desc.innerHTML = '<div class="ellipsis">' + position.addr1 + position.addr2 + '</div>' + 
+	        				'<div class="jibun ellipsis">' + marker.getPosition().getLat() + ', ' + marker.getPosition().getLng() + '</div>' +
+	        				'<button type="button" ptitle="' + position.title + '" onclick="modalPopup(this,' + marker.getPosition().getLat() + ',' + marker.getPosition().getLng() + ')">내 기록에 저장하기</button>'
+	
+	         img.appendChild(firstimage);
+	
+	         body.appendChild(img);
+	         body.appendChild(desc);
 	         
+	         title.appendChild(close);
+	
+	         info.appendChild(title);
+	         info.appendChild(body);
+	
+	         wrap.appendChild(info);
+	         
+	        // 커스텀 오버레이 객체 생성
+	        var overlay = new daum.maps.CustomOverlay({
+	           content : wrap,  
+	        }); 
+	       
+	        // 마커 클릭 시 커스텀오버레이 생성 이벤트 
+	        daum.maps.event.addListener(marker, 'click', function(mouseEvent) {
+	           overlay.setMap(map);
+	           overlay.setPosition(marker.getPosition());
+	        }); 
+	        
+	        // 오버레이 닫기 메서드 
+	        function closeOverlay() {
+	     	    overlay.setMap(null);     
+	     	 }
 	       return marker;
 	         
 	       clickable: true;
@@ -408,8 +494,8 @@ function getMapList(areaCode) {
 function modalPopup(e, lat, lng) {  
 	var ptitle = e.getAttribute("ptitle");
 	
-	console.log(ptitle);
-	console.log(lat, lng);  
+	console.log("모달창: " + ptitle);
+	console.log("모달창: " + lat, lng);  
 	
 	$('#selectMap').modal({
 		keyboard: true
